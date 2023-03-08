@@ -195,7 +195,7 @@ def init_ndarray(values, index, columns, dtype: Optional[DtypeObj], copy: bool):
         # Need to convert values into a single array before hand
         try:
             values_shape = values.shape
-            oneD_array = sanitize_array(values.flatten(), index, dtype, copy, 
+            oneD_array: np.ndarray = sanitize_array(values.flatten(), index, dtype, copy, 
                                             raise_cast_failure=True)
             values = np.reshape(oneD_array, values_shape)
             
