@@ -913,6 +913,10 @@ class Series(base.IndexOpsMixin, NDFrame):  # type: ignore[misc]
 
         indices = ensure_platform_int(indices)
 
+        if axis not in [0]:
+            raise ValueError(f"Series.take() should always take axis=0, "
+                             f"but axis={axis} was taken.")
+
         if (
             indices.ndim == 1
             and using_copy_on_write()
