@@ -16,7 +16,6 @@ from pandas.compat.numpy import _np_version_under1p19
 from pandas.core.dtypes.common import is_integer_dtype
 from pandas.core.dtypes.dtypes import DatetimeTZDtype, IntervalDtype, PeriodDtype
 
-
 import pandas as pd
 from pandas import (
     Categorical,

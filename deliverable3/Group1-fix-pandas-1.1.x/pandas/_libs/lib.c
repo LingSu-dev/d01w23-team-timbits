@@ -23,8 +23,8 @@
         ],
         "include_dirs": [
             "pandas/_libs",
-            "./pandas/_libs",
             "./pandas/_libs/tslibs",
+            "./pandas/_libs",
             "pandas/_libs/src/klib",
             "/usr/local/lib/python3.10/site-packages/numpy/core/include"
         ],
