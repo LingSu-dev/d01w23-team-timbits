@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 import functools
 import itertools
 import re
+import math
 
 import numpy as np
 import numpy.ma as ma
@@ -15,7 +16,6 @@ from pandas.compat.numpy import _np_version_under1p19
 
 from pandas.core.dtypes.common import is_integer_dtype
 from pandas.core.dtypes.dtypes import DatetimeTZDtype, IntervalDtype, PeriodDtype
-
 
 import pandas as pd
 from pandas import (
@@ -2625,7 +2625,74 @@ class TestDataFrameConstructors:
         dti = pd.date_range("2016-01-01", periods=3, tz="US/Pacific")
         with pytest.raises(ValueError, match="Shape of passed values"):
             DataFrame(dti, index=range(4))
-            
+
+    def test_list_initialize_with_none(self):
+        #https://github.com/pandas-dev/pandas/issues/32218
+        df = pd.DataFrame(["1", "2", None], columns=["a"], dtype="str")
+        assert df.loc[2, "a"] == None
+        
+        df2 = pd.DataFrame([None, None, None], columns=["c"], dtype="str")
+        assert df2.loc[0, "c"] == None
+        assert df2.loc[1, "c"] == None
+        assert df2.loc[2, "c"] == None
+        
+    def test_init_maskedarray_with_none(self):
+        mask = [False, False, True, False, True]
+        
+        data = np.array([1, None, 3, 4, 5])
+        masked_data = np.ma.masked_array(data, mask)
+        df = pd.DataFrame(masked_data, columns=["A"], dtype="str")
+        expected = pd.DataFrame({"A": [1, None, math.nan, 4, math.nan]}, dtype="str")
+        
+        data2 = np.array([None, None, None, None, None])
+        masked_data2 = np.ma.masked_array(data2, mask)
+        df2 = pd.DataFrame(masked_data2, columns=["B"], dtype="str")
+        expected2 = pd.DataFrame({"B": [None, None, math.nan, None, math.nan]}, dtype="str")
+        
+        tm.assert_frame_equal(df, expected)
+        tm.assert_frame_equal(df2, expected2)        
+        
+    def test_constructor_np_ndarray_columns_with_none(self):
+        #https://github.com/pandas-dev/pandas/issues/32218
+        #variables in np.ndarray can only have one type
+        s = np.ndarray((1,))
+        s[:]= None
+        result = pd.DataFrame(s, columns=["a"], dtype="str")
+        expected = pd.DataFrame({"a": [None]}, dtype="str")
+        
+        s2 = np.ndarray((4,2))
+        s2[:] = None
+        result2 = pd.DataFrame(s2, columns=["b", "c"], dtype="str")
+        expected2 = pd.DataFrame({"b": [None, None, None, None], "c": [None, None, None, None]}, dtype="str")
+        
+        tm.assert_frame_equal(result, expected)
+        tm.assert_frame_equal(result2, expected2)
+              
+    def test_constructor_series_of_string_columns_with_none(self):
+        #https://github.com/pandas-dev/pandas/issues/32218
+        s = pd.Series(["1", "2", None], dtype=object)
+        df = pd.DataFrame(s, columns=["a"], dtype="str")
+        expected = pd.DataFrame({"a": ["1","2", None]},dtype="str")
+        
+        s2 = pd.Series([None, None, None], dtype=object)
+        df2 = pd.DataFrame(s2, columns=["c"], dtype="str")
+        expected2 = pd.DataFrame({"c": [None, None, None]},dtype="str")
+        
+        tm.assert_frame_equal(df, expected)
+        tm.assert_frame_equal(df2, expected2)
+        
+    def test_index_of_string_columns_with_none(self):
+        i = pd.Index(["1", "2", None], dtype=object)
+        df = pd.DataFrame(i, columns=["A"], dtype="str")
+        expected = pd.DataFrame({"A": ["1","2", None]},dtype="str")
+        
+        i2 = pd.Index([None, None, None], dtype=object)
+        df2 = pd.DataFrame(i2, columns=["A"], dtype="str")
+        expected2 = pd.DataFrame({"A": [None, None, None]},dtype="str")
+        
+        tm.assert_frame_equal(df, expected)
+        tm.assert_frame_equal(df2, expected2)
+         
 
 class TestDataFrameConstructorWithDatetimeTZ:
     def test_from_dict(self):
