@@ -31,3 +31,13 @@ def test_take_categorical():
         pd.Categorical(["b", "b", "a"], categories=["a", "b", "c"]), index=[1, 1, 0]
     )
     tm.assert_series_equal(result, expected)
+
+def test_take_wrong_axis():
+    # https://github.com/pandas-dev/pandas/issues/51022
+    ser = Series([1,2,3])
+    
+    msg = lambda x: f"axis={x} is not a valid parameter"
+    with pytest.raises(ValueError, match=msg("foo")):
+        ser.take([1], axis="foo")
+    with pytest.raises(ValueError, match=msg(1)):
+        ser.take([1], axis=1)
