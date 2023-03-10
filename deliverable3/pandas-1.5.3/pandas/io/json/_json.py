@@ -272,7 +272,7 @@ class FrameWriter(Writer):
             if isinstance(self.obj.columns, MultiIndex):
                 new_column = [list(x) for x in self.obj.columns]
                 # transposed =  list(map(list, zip(*list(map(list, zip(*self.obj.columns))))))
-                new_df = DataFrame(data=self.obj.values, columns=new_columns, index=self.obj.index)
+                new_df = DataFrame(data=self.obj.values, columns=new_column, index=self.obj.index)
                 obj_to_write = new_df
             else:
                 obj_to_write = self.obj
