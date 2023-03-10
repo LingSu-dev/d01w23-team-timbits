@@ -188,16 +188,22 @@ def init_ndarray(values, index, columns, dtype: Optional[DtypeObj], copy: bool):
     # by definition an array here
     # the dtypes will be coerced to a single dtype
     values = _prep_ndarray(values, copy=copy)
-
-    if dtype is not None:
-        if not is_dtype_equal(values.dtype, dtype):
-            try:
-                values = values.astype(dtype)
-            except Exception as orig:
-                # e.g. ValueError when trying to cast object dtype to float64
-                raise ValueError(
-                    f"failed to cast to '{dtype}' (Exception was: {orig})"
-                ) from orig
+    
+    if dtype is not None and not is_dtype_equal(values.dtype, dtype):
+        
+        # Similar to Series, use sanitize_array to precess array
+        # Need to convert values into a single array before hand
+        try:
+            values_shape = values.shape
+            oneD_array = sanitize_array(values.flatten(), index, dtype, copy, 
+                                            raise_cast_failure=True)
+            values = np.reshape(oneD_array, values_shape)
+            
+        except Exception as orig:
+            # e.g. ValueError when trying to cast object dtype to float64
+            raise ValueError(
+                f"failed to cast to '{dtype}' (Exception was: {orig})"
+            ) from orig
 
     # _prep_ndarray ensures that values.ndim == 2 at this point
     index, columns = _get_axes(

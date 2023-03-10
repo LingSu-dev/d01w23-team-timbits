@@ -21,8 +21,8 @@
             "pandas/_libs/tslibs/src/datetime/np_datetime_strings.h"
         ],
         "include_dirs": [
-            "./pandas/_libs/tslibs",
             "./pandas/_libs",
+            "./pandas/_libs/tslibs",
             "/usr/local/lib/python3.10/site-packages/numpy/core/include"
         ],
         "language": "c",
