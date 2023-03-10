@@ -15,6 +15,7 @@ import pandas._testing as tm
 import pandas.core.algorithms as algos
 from pandas.core.arrays import DatetimeArray, SparseArray, TimedeltaArray
 from pandas.core.internals import BlockManager, SingleBlockManager, make_block
+from pandas.core.internals.construction import init_ndarray
 
 
 @pytest.fixture
@@ -1196,6 +1197,29 @@ class TestShouldStore:
 
         # ndarray instead of Categorical
         assert not blk.should_store(np.asarray(cat))
+        
+class TestInitNdArray:
+    def test_init_ndarray_with_none(self):
+        #https://github.com/pandas-dev/pandas/issues/32218
+        obdtype = object
+        arr = init_ndarray(["1", "2", None], None, None, obdtype, False).as_array()
+        expected = np.array(["1", "2", None])
+        tm.assert_numpy_array_equal(arr[0], expected)
+        
+        arr2 = init_ndarray(["1", None, 3], None, None, obdtype, False).as_array()
+        expected2 = np.array(["1", None, 3])
+        tm.assert_numpy_array_equal(arr2[0], expected2)
+
+    def test_init_ndarray_with_all_none_columns(self):
+        #https://github.com/pandas-dev/pandas/issues/32218
+        obdtype = object
+        arr = init_ndarray([None], None, None, obdtype, False).as_array()
+        expected = np.array([None])
+        tm.assert_numpy_array_equal(arr[0], expected)
+        
+        arr2 = init_ndarray([None, None, None, None], None, None, obdtype, False).as_array()
+        expected2 = np.array([None, None, None, None])
+        tm.assert_numpy_array_equal(arr2[0], expected2)
 
 
 @pytest.mark.parametrize(
