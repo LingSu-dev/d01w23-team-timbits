@@ -41,3 +41,11 @@ def test_take_wrong_axis():
         ser.take([1], axis="foo")
     with pytest.raises(ValueError, match=msg(1)):
         ser.take([1], axis=1)
+
+def test_take_non_default_axis():
+    # https://github.com/pandas-dev/pandas/issues/51022
+    msg = lambda x: f"axis={x} is not a valid parameter"
+    with pytest.raises(ValueError, match=msg("aaa")):
+        pd.Series([1,4,7]).take([2], axis="aaa")
+    with pytest.raises(ValueError, match=msg("0")):
+        pd.Series([1,4,7]).take([0,1], axis="0")
