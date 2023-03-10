@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple, Un
 import numpy as np
 import numpy.ma as ma
 
+from pandas.api.types import is_numeric_dtype
 from pandas._libs import lib
 from pandas._typing import Axis, DtypeObj, Scalar
 
@@ -194,10 +195,14 @@ def init_ndarray(values, index, columns, dtype: Optional[DtypeObj], copy: bool):
         # Similar to Series, use sanitize_array to precess array
         # Need to convert values into a single array before hand
         try:
-            values_shape = values.shape
-            oneD_array: np.ndarray = sanitize_array(values.flatten(), index, dtype, copy, 
-                                            raise_cast_failure=True)
-            values = np.reshape(oneD_array, values_shape)
+            # Due to nullable number types, we will not modify their behaviour
+            if (is_numeric_dtype(dtype)):
+                values = values.astype(dtype)
+            else:
+                values_shape = values.shape
+                oneD_array: np.ndarray = sanitize_array(values.flatten(), index, dtype, copy, 
+                                                raise_cast_failure=True)
+                values = np.reshape(oneD_array, values_shape)
             
         except Exception as orig:
             # e.g. ValueError when trying to cast object dtype to float64
