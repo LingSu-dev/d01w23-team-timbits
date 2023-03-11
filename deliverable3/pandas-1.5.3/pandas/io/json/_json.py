@@ -1,4 +1,5 @@
 from __future__ import annotations
+import copy
 
 from abc import (
     ABC,
@@ -267,12 +268,14 @@ class FrameWriter(Writer):
             obj_to_write = self.obj.to_dict(orient="split")
             del obj_to_write["index"]
 
-        elif isinstance(self.obj, DataFrame) and self.orient=="split":
-            
-            if isinstance(self.obj.columns, MultiIndex):
+        elif self.orient=="split":
+            if isinstance(self.obj.columns, MultiIndex): 
                 new_column = [list(x) for x in self.obj.columns]
-                # transposed =  list(map(list, zip(*list(map(list, zip(*self.obj.columns))))))
-                new_df = DataFrame(data=self.obj.values, columns=new_column, index=self.obj.index)
+                #self.obj.columns = new_coloumn
+                #transposed =  list(map(list, zip(*list(map(list, zip(*self.obj.columns))))))
+                #new_df = DataFrame(data=self.obj.values, columns=new_coloumn, index=self.obj.index)
+                new_df = copy.deepcopy(self.obj)
+                new_df.columns=new_column
                 obj_to_write = new_df
             else:
                 obj_to_write = self.obj
