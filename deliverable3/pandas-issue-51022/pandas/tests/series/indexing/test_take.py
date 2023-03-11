@@ -61,3 +61,13 @@ class TestSeries:
         except_msg = f"axis={ax} is not a valid parameter"
         with pytest.raises(ValueError, match=except_msg):
             s.take(indices, axis=ax)
+
+        ax = 1
+        except_msg = f"axis={ax} is not a valid parameter"
+        with pytest.raises(ValueError, match=except_msg):
+            s.take(indices, axis=ax)
+
+        ax = "columns"
+        except_msg = f"axis={ax} is not a valid parameter"
+        with pytest.raises(ValueError, match=except_msg):
+            s.take(indices, axis=ax)
