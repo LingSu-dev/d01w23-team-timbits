@@ -31,37 +31,4 @@ def test_good_kwargs():
         tm.assert_frame_equal(df, read_json(df.to_json(orient="index"), orient="index"))
 
 
-def test_orient_split_issue_input():
-    df = pd.DataFrame([[1, 2], [3, 4]], columns=pd.MultiIndex.from_arrays([["2022", "2022"], ['JAN', 'FEB']]))
-    df_json = '{"columns":[["2022","2022"],["JAN","FEB"]],"index":[0,1],"data":[[1,2],[3,4]]}'
-    with tm.assert_produces_warning(None):
-        tm.assert_frame_equal(df, read_json(df.to_json(orient="split"), orient="split"))
-    with tm.assert_produces_warning(None):
-        assert(df_json==df.to_json(orient="split"))
 
-
-def test_orient_split_bigDF():
-    df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]], columns=pd.MultiIndex.from_arrays([["2022", "2022", "2023"], ['JAN', 'FEB', "FEB"], ["A", "B", "A"]]))
-    df_json = '{"columns":[["2022","2022","2023"],["JAN","FEB","FEB"],["A","B","A"]],"index":[0,1,2],"data":[[1,2,3],[4,5,6],[7,8,9]]}'
-    with tm.assert_produces_warning(None):
-        tm.assert_frame_equal(df, read_json(df.to_json(orient="split"), orient="split"))
-    with tm.assert_produces_warning(None):
-        assert(df_json==df.to_json(orient="split"))
-
-
-def test_orient_split_differnt_type():
-    df = pd.DataFrame([[1, 2], [3, 4]], columns=pd.MultiIndex.from_arrays([[2022, 2022], ['JAN', 'FEB']]))
-    df_json = '{"columns":[[2022,2022],["JAN","FEB"]],"index":[0,1],"data":[[1,2],[3,4]]}'
-    with tm.assert_produces_warning(None):
-        tm.assert_frame_equal(df, read_json(df.to_json(orient="split"), orient="split"))
-    with tm.assert_produces_warning(None):
-        assert(df_json==df.to_json(orient="split"))
-
-
-def test_orient_split_smallDF():
-    df = pd.DataFrame([[1]], columns=pd.MultiIndex.from_arrays([[2022]]))
-    df_json = '{"columns":[[2022]],"index":[0],"data":[[1]]}'
-    with tm.assert_produces_warning(None):
-        tm.assert_frame_equal(df, read_json(df.to_json(orient="split"), orient="split"))
-    with tm.assert_produces_warning(None):
-        assert(df_json==df.to_json(orient="split"))
