@@ -33,7 +33,7 @@ def test_take_categorical():
     tm.assert_series_equal(result, expected)
 
 
-def test_take_with_valid_axis(self):
+def test_take_with_valid_axis():
     # https://github.com/pandas-dev/pandas/issues/51022
     s = pd.Series([1, 2, 3, 4, 5])
     indices = [0, 2, 4]
@@ -46,7 +46,7 @@ def test_take_with_valid_axis(self):
     except_result = pd.Series([1, 3, 5], index=indices)
     tm.assert_series_equal(result, except_result)
 
-def test_take_with_invalid_axis(self):
+def test_take_with_invalid_axis():
     # https://github.com/pandas-dev/pandas/issues/51022
     s = pd.Series([1, 2])
     indices = [0]
@@ -61,7 +61,7 @@ def test_take_with_invalid_axis(self):
     with pytest.raises(ValueError, match=except_msg):
         s.take(indices, axis=ax)
 
-def test_take_with_2d_axis(self):
+def test_take_with_2d_axis():
     # https://github.com/pandas-dev/pandas/issues/51022
     s = pd.Series([1, 2, 3, 4, 5])
     indices = [0, 2, 4]
