@@ -913,6 +913,9 @@ class Series(base.IndexOpsMixin, NDFrame):  # type: ignore[misc]
 
         indices = ensure_platform_int(indices)
 
+        if axis not in [0, "index"]:
+            raise ValueError(f"axis={axis} is not a valid parameter")
+
         if (
             indices.ndim == 1
             and using_copy_on_write()
