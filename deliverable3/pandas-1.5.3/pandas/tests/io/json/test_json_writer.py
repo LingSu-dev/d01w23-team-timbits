@@ -5,7 +5,6 @@ from pandas.io.json._json import FrameWriter
 
 
 def test_writejson_base_case():
-    #generate a empty dataframe
     testdf = DataFrame()
     writer = FrameWriter(obj = testdf, date_format="iso", double_precision=2, ensure_ascii=False, date_unit="s", index=True, default_handler=None,indent=4,orient="split")
     tm.assert_frame_equal(testdf, writer.obj_to_write)
