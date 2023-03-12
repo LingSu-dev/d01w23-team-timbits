@@ -31,3 +31,46 @@ def test_take_categorical():
         pd.Categorical(["b", "b", "a"], categories=["a", "b", "c"]), index=[1, 1, 0]
     )
     tm.assert_series_equal(result, expected)
+
+
+def test_take_with_valid_axis(self):
+    # https://github.com/pandas-dev/pandas/issues/51022
+    s = pd.Series([1, 2, 3, 4, 5])
+    indices = [0, 2, 4]
+
+    result = s.take(indices, axis=0)
+    except_result = pd.Series([1, 3, 5], index=indices)
+    tm.assert_series_equal(result, except_result)
+
+    result = s.take(indices, axis="index")
+    except_result = pd.Series([1, 3, 5], index=indices)
+    tm.assert_series_equal(result, except_result)
+
+def test_take_with_invalid_axis(self):
+    # https://github.com/pandas-dev/pandas/issues/51022
+    s = pd.Series([1, 2])
+    indices = [0]
+
+    ax = -1
+    except_msg = f"axis={ax} is not a valid parameter"
+    with pytest.raises(ValueError, match=except_msg):
+        s.take(indices, axis=ax)
+
+    ax = "foo"
+    except_msg = f"axis={ax} is not a valid parameter"
+    with pytest.raises(ValueError, match=except_msg):
+        s.take(indices, axis=ax)
+
+def test_take_with_2d_axis(self):
+    # https://github.com/pandas-dev/pandas/issues/51022
+    s = pd.Series([1, 2, 3, 4, 5])
+    indices = [0, 2, 4]
+    ax = 1
+    except_msg = f"axis={ax} is not a valid parameter"
+    with pytest.raises(ValueError, match=except_msg):
+        s.take(indices, axis=ax)
+
+    ax = "columns"
+    except_msg = f"axis={ax} is not a valid parameter"
+    with pytest.raises(ValueError, match=except_msg):
+        s.take(indices, axis=ax)
