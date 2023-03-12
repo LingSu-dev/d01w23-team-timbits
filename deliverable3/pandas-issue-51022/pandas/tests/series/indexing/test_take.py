@@ -61,6 +61,10 @@ def test_take_with_invalid_axis(self):
     with pytest.raises(ValueError, match=except_msg):
         s.take(indices, axis=ax)
 
+def test_take_with_2d_axis(self):
+    # https://github.com/pandas-dev/pandas/issues/51022
+    s = pd.Series([1, 2, 3, 4, 5])
+    indices = [0, 2, 4, 6]
     ax = 1
     except_msg = f"axis={ax} is not a valid parameter"
     with pytest.raises(ValueError, match=except_msg):
