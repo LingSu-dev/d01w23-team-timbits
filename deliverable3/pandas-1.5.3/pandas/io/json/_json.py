@@ -136,7 +136,6 @@ def to_json(
     indent: int = 0,
     storage_options: StorageOptions = None,
 ) -> str | None:
-
     if not index and orient not in ["split", "table"]:
         raise ValueError(
             "'index=False' is only valid when 'orient' is 'split' or 'table'"
@@ -263,7 +262,13 @@ class FrameWriter(Writer):
             obj_to_write = self.obj.to_dict(orient="split")
             del obj_to_write["index"]
         else:
-            obj_to_write = self.obj
+            y = list(map(list, self.obj.columns.to_list()))
+            new_s = DataFrame(
+                data=self.obj.values,
+                columns=y,
+                index=self.obj.index,
+            )
+            obj_to_write = new_s
         return obj_to_write
 
     def _format_axes(self):
@@ -786,7 +791,6 @@ class JsonReader(abc.Iterator, Generic[FrameSeriesStrT]):
         storage_options: StorageOptions = None,
         encoding_errors: str | None = "strict",
     ) -> None:
-
         self.orient = orient
         self.typ = typ
         self.dtype = dtype
@@ -1057,7 +1061,6 @@ class Parser:
             raise ValueError(f"JSON data had unexpected key(s): {bad_keys_joined}")
 
     def parse(self):
-
         if self.numpy:
             self._parse_numpy()
         else:
@@ -1136,7 +1139,6 @@ class Parser:
                 return new_data, True
 
         if data.dtype == "object":
-
             # try float
             try:
                 data = data.astype("float64")
@@ -1144,9 +1146,7 @@ class Parser:
                 pass
 
         if data.dtype.kind == "f":
-
             if data.dtype != "float64":
-
                 # coerce floats to 64
                 try:
                     data = data.astype("float64")
@@ -1155,7 +1155,6 @@ class Parser:
 
         # don't coerce 0-len data
         if len(data) and (data.dtype == "float" or data.dtype == "object"):
-
             # coerce ints if we can
             try:
                 new_data = data.astype("int64")
@@ -1166,7 +1165,6 @@ class Parser:
 
         # coerce ints to 64
         if data.dtype == "int":
-
             # coerce floats to 64
             try:
                 data = data.astype("int64")
@@ -1274,7 +1272,6 @@ class FrameParser(Parser):
     _split_keys = ("columns", "index", "data")
 
     def _parse_numpy(self):
-
         json = self.json
         orient = self.orient
 
@@ -1312,7 +1309,6 @@ class FrameParser(Parser):
             )
 
     def _parse_no_numpy(self):
-
         json = self.json
         orient = self.orient
 
@@ -1361,7 +1357,6 @@ class FrameParser(Parser):
             new_obj[i] = c
 
         if needs_new_obj:
-
             # possibly handle dup columns
             new_frame = DataFrame(new_obj, index=obj.index)
             new_frame.columns = obj.columns
