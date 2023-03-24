@@ -2880,6 +2880,33 @@ class CategoricalAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
         if res is not None:
             return Series(res, index=self._index, name=self._name)
 
+class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
+
+    def __init__(self, data) -> None:
+        self._parent = data
+        self._freeze()
+
+    def _delegate_property_get(self, name):
+        return getattr(self._parent, name)
+
+    def _delegate_property_set(self, name, new_values):
+        return setattr(self._parent, name, new_values)
+
+    @property
+    def codes(self) -> Series:
+        """
+        Return Series of codes as well as the index.
+        """
+        print("hi")
+
+    def _delegate_method(self, name, *args, **kwargs):
+        from pandas import Series
+
+        method = getattr(self._parent, name)
+        res = method(*args, **kwargs)
+        if res is not None:
+            return Series(res, index=self._index, name=self._name)
+
 
 # utility routines
 
