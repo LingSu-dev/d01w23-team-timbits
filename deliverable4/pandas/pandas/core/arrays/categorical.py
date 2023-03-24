@@ -2893,19 +2893,35 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
         return setattr(self._parent, name, new_values)
 
     @property
-    def codes(self) -> Series:
+    def all(self) -> DataFrame:
+        """
+        Return all categorical columns in the Dataframe
+        """
+        return self._parent.select_dtypes("category")
+    
+    @property 
+    def ordered(self) -> DataFrame:
         """
         Return Series of codes as well as the index.
         """
-        print("hi")
+        all_cat_columns = self.all
+        return all_cat_columns[[col for col in all_cat_columns.columns if all_cat_columns[col].cat.ordered]]
+    
+    @property
+    def unordered(self) -> DataFrame:
+        """
+        Return Series of codes as well as the index.
+        """
+        all_cat_columns = self.all
+        return all_cat_columns[[col for col in all_cat_columns.columns if not all_cat_columns[col].cat.ordered]]
 
     def _delegate_method(self, name, *args, **kwargs):
-        from pandas import Series
+        from pandas import DataFrame
 
         method = getattr(self._parent, name)
         res = method(*args, **kwargs)
         if res is not None:
-            return Series(res, index=self._index, name=self._name)
+            return DataFrame(res, index=self._index, name=self._name)
 
 
 # utility routines
