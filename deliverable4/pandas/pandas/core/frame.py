@@ -151,6 +151,7 @@ from pandas.core import (
     ops,
 )
 from pandas.core.accessor import CachedAccessor
+from pandas.core.arrays.categorical import CategoricalFrameAccessor
 from pandas.core.apply import (
     reconstruct_func,
     relabel_result,
@@ -11642,6 +11643,9 @@ Parrot 2  Parrot       24.0
     boxplot = pandas.plotting.boxplot_frame
     sparse = CachedAccessor("sparse", SparseFrameAccessor)
 
+    # ----------------------------------------------------------------------
+    # Add extra accessors to DataFrame
+    cat = CachedAccessor("cat", CategoricalFrameAccessor)
     # ----------------------------------------------------------------------
     # Internal Interface Methods
 
