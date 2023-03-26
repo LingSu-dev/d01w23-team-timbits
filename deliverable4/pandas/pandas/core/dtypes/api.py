@@ -29,6 +29,7 @@ from pandas.core.dtypes.common import (
     is_number,
     is_numeric_dtype,
     is_object_dtype,
+    is_ordered_categorical_dtype,
     is_period_dtype,
     is_re,
     is_re_compilable,
@@ -38,6 +39,7 @@ from pandas.core.dtypes.common import (
     is_string_dtype,
     is_timedelta64_dtype,
     is_timedelta64_ns_dtype,
+    is_unordered_categorical_dtype,
     is_unsigned_integer_dtype,
     pandas_dtype,
 )
@@ -73,6 +75,7 @@ __all__ = [
     "is_number",
     "is_numeric_dtype",
     "is_object_dtype",
+    "is_ordered_categorical_dtype",
     "is_period_dtype",
     "is_re",
     "is_re_compilable",
@@ -82,6 +85,7 @@ __all__ = [
     "is_string_dtype",
     "is_timedelta64_dtype",
     "is_timedelta64_ns_dtype",
+    "is_unordered_categorical_dtype",
     "is_unsigned_integer_dtype",
     "pandas_dtype",
 ]
