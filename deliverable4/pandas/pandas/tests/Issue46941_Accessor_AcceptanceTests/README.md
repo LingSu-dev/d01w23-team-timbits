@@ -7,10 +7,10 @@ To run the test, please make sure you setup as below:
 
 Execute the following command:
 ```
-python pandas/tests/Issue32218_AcceptanceTests/test_46941.py
+python pandas/tests/Issue46941_Accessor_AcceptanceTests/test_accessor.py
 ```
 
-Open pandas/tests/Issue32218_AcceptanceTests/expected_output.pdf
+Open pandas/tests/Issue46941_Accessor_AcceptanceTests/expected_output.pdf
 
 Verify that the generated output look like expected_output.pdf    
 If this is true, then the tests are successful.
