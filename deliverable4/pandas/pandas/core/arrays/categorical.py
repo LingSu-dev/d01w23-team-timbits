@@ -2902,7 +2902,7 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
     @property 
     def ordered(self) -> DataFrame:
         """
-        Return Series of codes as well as the index.
+        Return all ordered categorical columns in the Dataframe
         """
         all_cat_columns = self.all
         return all_cat_columns[[col for col in all_cat_columns.columns if all_cat_columns[col].cat.ordered]]
@@ -2910,7 +2910,7 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
     @property
     def unordered(self) -> DataFrame:
         """
-        Return Series of codes as well as the index.
+        Return all unordered categorical columns in the Dataframe
         """
         all_cat_columns = self.all
         return all_cat_columns[[col for col in all_cat_columns.columns if not all_cat_columns[col].cat.ordered]]
