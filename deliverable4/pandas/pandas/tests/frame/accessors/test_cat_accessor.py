@@ -1,5 +1,3 @@
-import warnings
-
 import numpy as np
 import pytest
 
@@ -43,7 +41,7 @@ class TestCatFrameAccessor(CatFrameAccessorBase):
     
     def test_null_column_cat_accessor_get_properties(self, empty_df):
         """
-        Empty DataFrames on .cat.* should should an empty DataFrame
+        Empty DataFrames on .cat.* should an empty DataFrame
         """
         tm.assert_frame_equal(empty_df, empty_df.cat.all)
         tm.assert_frame_equal(empty_df, empty_df.cat.ordered)
@@ -51,7 +49,7 @@ class TestCatFrameAccessor(CatFrameAccessorBase):
     
     def test_no_cat_cat_accessor_get_properties(self, nocat_df, empty_df):
         """
-        DataFrames without any categorical indexes on .cat.* should should an empty DataFrame
+        DataFrames without any categorical indexes on .cat.* should an empty DataFrame
         """
         tm.assert_frame_equal(empty_df, nocat_df.cat.all, check_column_type=False)
         tm.assert_frame_equal(empty_df, nocat_df.cat.ordered, check_column_type=False)
@@ -59,7 +57,7 @@ class TestCatFrameAccessor(CatFrameAccessorBase):
     
     def test_only_ordered_cat_accessor_get_properties(self, ordered_df, empty_df):
         """
-        DataFrames with only ordered categorical indexes on .cat.all/ordered should should an empty DataFrame,
+        DataFrames with only ordered categorical indexes on .cat.all/ordered should an empty DataFrame,
         o.w. should return nothing
         """
         tm.assert_frame_equal(ordered_df, ordered_df.cat.all, check_column_type=False)
@@ -68,7 +66,7 @@ class TestCatFrameAccessor(CatFrameAccessorBase):
     
     def test_only_unordered_cat_accessor_get_properties(self, unordered_df, empty_df):
         """
-        DataFrames with only unordered categorical indexes on .cat.all/unordered should should an empty DataFrame,
+        DataFrames with only unordered categorical indexes on .cat.all/unordered should an empty DataFrame,
         o.w. should return nothing
         """
         tm.assert_frame_equal(unordered_df, unordered_df.cat.all, check_column_type=False)
@@ -102,7 +100,6 @@ class TestCatFrameAccessor(CatFrameAccessorBase):
         mixed = concat([unordered_df, ordered_df, nocat_df], axis=1, join='inner')
         id = np.identity(6,dtype=np.int64)
         for c, i in zip(mixed.columns, range(6)):
-            print( Series(data=id[i]).astype(mixed[c].dtype))
             mixed[c] = Series(data=id[i]).astype(mixed[c].dtype)
             
         ordered_columns = mixed[ordered_df.columns]
