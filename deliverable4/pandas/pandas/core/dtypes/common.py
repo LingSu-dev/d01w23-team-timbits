@@ -540,7 +540,7 @@ def is_ordered_categorical_dtype(arr_or_dtype) -> bool:
     if arr_or_dtype is None or not CategoricalDtype.is_dtype(arr_or_dtype):
         return False
     if isinstance(arr_or_dtype, ExtensionDtype):
-        cat_dtype = CategoricalDtype._from_values_or_dtype(dtype=arr_or_dtype) 
+        return arr_or_dtype.ordered
     else:
         cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
     return CategoricalDtype.is_dtype(cat_dtype) and cat_dtype.ordered
@@ -554,7 +554,7 @@ def is_unordered_categorical_dtype(arr_or_dtype) -> bool:
     if arr_or_dtype is None or not CategoricalDtype.is_dtype(arr_or_dtype):
         return True
     if isinstance(arr_or_dtype, ExtensionDtype):
-        cat_dtype = CategoricalDtype._from_values_or_dtype(dtype=arr_or_dtype) 
+        return not arr_or_dtype.ordered
     else:
         cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
     return CategoricalDtype.is_dtype(cat_dtype) and not cat_dtype.ordered
