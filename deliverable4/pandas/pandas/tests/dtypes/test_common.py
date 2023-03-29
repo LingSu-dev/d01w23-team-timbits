@@ -296,6 +296,29 @@ def test_is_string_dtype():
 def test_is_string_dtype_nullable(nullable_string_dtype):
     assert com.is_string_dtype(pd.array(["a", "b"], dtype=nullable_string_dtype))
 
+def test_is_ordered_categorical_dtype():
+    #46941
+    assert not com.is_ordered_categorical_dtype(str)
+    assert not com.is_ordered_categorical_dtype(int)
+    assert not com.is_ordered_categorical_dtype(None)
+    assert not com.is_ordered_categorical_dtype(
+        CategoricalDtype(categories=[0, 1], ordered=False))
+    
+    assert com.is_ordered_categorical_dtype(
+        CategoricalDtype(categories=[0, 1], ordered=True))
+    
+def test_is_unordered_categorical_dtype():
+    #46941
+    assert not com.is_unordered_categorical_dtype(int)
+    assert not com.is_unordered_categorical_dtype(str)
+    assert not com.is_unordered_categorical_dtype(None)
+    assert not com.is_unordered_categorical_dtype(
+        CategoricalDtype(categories=[0, 1], ordered=True))
+    
+    assert com.is_ordered_categorical_dtype(
+        CategoricalDtype(categories=[0, 1], ordered=False))
+    assert com.is_ordered_categorical_dtype(
+        CategoricalDtype(categories=['a', 'b'], ordered=False))
 
 integer_dtypes: list = []
 
