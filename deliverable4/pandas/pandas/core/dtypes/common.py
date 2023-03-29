@@ -533,6 +533,15 @@ def is_categorical_dtype(arr_or_dtype) -> bool:
         return False
     return CategoricalDtype.is_dtype(arr_or_dtype)
 
+def _check_ordered_categorical_dtype(arr_or_dtype) -> bool:
+    """
+    Check if the provided array or dtype is of an ordered categorical dtype.
+    """
+    if isinstance(arr_or_dtype, ExtensionDtype):
+        return arr_or_dtype.ordered
+    else:
+        cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
+    return cat_dtype.ordered
 
 def is_ordered_categorical_dtype(arr_or_dtype) -> bool:
     """
@@ -540,12 +549,7 @@ def is_ordered_categorical_dtype(arr_or_dtype) -> bool:
     """
     if not is_categorical_dtype(arr_or_dtype):
         return False
-    if isinstance(arr_or_dtype, ExtensionDtype):
-        return arr_or_dtype.ordered
-    else:
-        cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
-    return cat_dtype.ordered
- 
+    return _check_ordered_categorical_dtype(arr_or_dtype)
    
 def is_unordered_categorical_dtype(arr_or_dtype) -> bool:
     """
@@ -553,12 +557,7 @@ def is_unordered_categorical_dtype(arr_or_dtype) -> bool:
     """
     if not is_categorical_dtype(arr_or_dtype):
         return False
-    if isinstance(arr_or_dtype, ExtensionDtype):
-        return not arr_or_dtype.ordered
-    else:
-        cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
-    return not cat_dtype.ordered
-
+    return not _check_ordered_categorical_dtype(arr_or_dtype)
    
 def is_string_or_object_np_dtype(dtype: np.dtype) -> bool:
     """
