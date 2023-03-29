@@ -306,6 +306,8 @@ def test_is_ordered_categorical_dtype():
     
     assert com.is_ordered_categorical_dtype(
         CategoricalDtype(categories=[0, 1], ordered=True))
+    assert com.is_ordered_categorical_dtype(
+        CategoricalDtype(categories=['a', 'b'], ordered=True))
     
 def test_is_unordered_categorical_dtype():
     #46941
