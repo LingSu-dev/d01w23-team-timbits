@@ -301,6 +301,7 @@ def test_is_ordered_categorical_dtype_with_invalid_type():
     assert not com.is_ordered_categorical_dtype(str)
     assert not com.is_ordered_categorical_dtype(int)
     assert not com.is_ordered_categorical_dtype(None)
+    assert not com.is_ordered_categorical_dtype(['a', 'b'])
     assert not com.is_ordered_categorical_dtype(
         CategoricalDtype(categories=[0, 1], ordered=False))
 
@@ -316,6 +317,7 @@ def test_is_unordered_categorical_dtype_with_invalid_type():
     assert not com.is_unordered_categorical_dtype(int)
     assert not com.is_unordered_categorical_dtype(str)
     assert not com.is_unordered_categorical_dtype(None)
+    assert not com.is_unordered_categorical_dtype(['a', 'b'])
     assert not com.is_unordered_categorical_dtype(
         CategoricalDtype(categories=[0, 1], ordered=True))
 
