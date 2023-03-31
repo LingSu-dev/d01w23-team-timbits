@@ -109,6 +109,7 @@ from pandas.core.api import (
     Series,
     DataFrame,
 )
+from pandas.core.framebuilder import dfBuilder
 
 from pandas.core.arrays.sparse import SparseDtype
 
