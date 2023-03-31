@@ -13,14 +13,31 @@ class dfBuilder:
         columns: list,
         dtypes: list = None, 
     ):
+        self.__rows=[]
         self.columns = columns
         if dtypes is not None:
             self.dtypes = list(dtypes)
             if len(columns) != len(dtypes):
-                raise ValueError("columns and type length do not match")
+                raise ValueError("Given columns and dtypes length do not match")
         else:
             self.dtypes = None
+
         
+
+    def appendDict(self, row: dict):
+        new_row = []
+        for i in range(len(self.columns)):
+            if self.columns[i] not in row:
+                raise ValueError("Missing data of column " + self.columns[i])
+            
+            if self.dtypes is not None:
+                r = np.array([row[self.columns[i]]], dtype= np.dtype(self.dtypes[i]))
+                new_row.append(r[0])
+            else:
+                new_row.append(row[self.columns[i]])
+
+        self.__rows.append(new_row)
+
 
 
     def appendRow(self, row: list):
@@ -36,27 +53,10 @@ class dfBuilder:
         
         else:
             self.__rows.append(row)
-            
-        """ 
-            #if np.dtype(type(row[i])) != np.dtype(self.dtypes[i]):
-            print(eval(np.dtype(self.dtypes[i])))
-            if isinstance(row[i], eval(np.dtype(self.dtypes[i]))):
-                    print(np.dtype(type(row[i])))
-                    print(np.dtype(self.dtypes[i]))
-                    raise ValueError("type error")
-                
-        """
+
 
     
 
     def build(self):
-        """
-        dtype_dict = {}
-        for i in range(len(self.columns)):
-            dtype_dict[self.columns[i]] = self.dtypes[i]
-        
-        df = DataFrame(self.__rows, columns=self.columns, dtype=dtype_dict)
-        return df
-        """
         df = DataFrame(self.__rows, columns=self.columns)
         return df
