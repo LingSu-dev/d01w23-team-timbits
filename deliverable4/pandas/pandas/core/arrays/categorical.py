@@ -2890,7 +2890,7 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
     ----------
     data : DataFrame eqiuvalents
     """
-    
+
     def __init__(self, data) -> None:
         self._parent = data
         self._freeze()
@@ -2937,7 +2937,6 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
         res = method(*args, **kwargs)
         if res is not None:
             return DataFrame(res, index=self._index, name=self._name)
-
 
 # utility routines
 

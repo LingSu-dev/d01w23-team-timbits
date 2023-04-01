@@ -533,32 +533,29 @@ def is_categorical_dtype(arr_or_dtype) -> bool:
         return False
     return CategoricalDtype.is_dtype(arr_or_dtype)
 
+def check_ordered_categorical_dtype(arr_or_dtype, is_ordered: bool=False) -> bool:
+    """
+    Helper function that check if the provided array or dtype is of an ordered categorical dtype.
+    """
+    if not is_categorical_dtype(arr_or_dtype):
+        return False
+    if isinstance(arr_or_dtype, ExtensionDtype):
+        return arr_or_dtype.ordered if is_ordered else not arr_or_dtype.ordered
+    else:
+        cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
+    return cat_dtype.ordered if is_ordered else not cat_dtype.ordered
 
 def is_ordered_categorical_dtype(arr_or_dtype) -> bool:
     """
     Check if the provided array or dtype is of an ordered categorical dtype.
     """
-    if not is_categorical_dtype(arr_or_dtype):
-        return False
-    if isinstance(arr_or_dtype, ExtensionDtype):
-        return arr_or_dtype.ordered
-    else:
-        cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
-    return cat_dtype.ordered
- 
+    return check_ordered_categorical_dtype(arr_or_dtype, is_ordered=True)
    
 def is_unordered_categorical_dtype(arr_or_dtype) -> bool:
     """
     Check if the provided array or dtype is of an unordered categorical dtype.
     """
-    if not is_categorical_dtype(arr_or_dtype):
-        return False
-    if isinstance(arr_or_dtype, ExtensionDtype):
-        return not arr_or_dtype.ordered
-    else:
-        cat_dtype = CategoricalDtype._from_values_or_dtype(values=arr_or_dtype)
-    return not cat_dtype.ordered
-
+    return check_ordered_categorical_dtype(arr_or_dtype)
    
 def is_string_or_object_np_dtype(dtype: np.dtype) -> bool:
     """
@@ -1892,6 +1889,7 @@ __all__ = [
     "is_numeric_dtype",
     "is_numeric_v_string_like",
     "is_object_dtype",
+    "is_ordered_categorical_dtype",
     "is_period_dtype",
     "is_re",
     "is_re_compilable",
@@ -1903,6 +1901,7 @@ __all__ = [
     "is_string_or_object_np_dtype",
     "is_timedelta64_dtype",
     "is_timedelta64_ns_dtype",
+    "is_unordered_categorical_dtype",
     "is_unsigned_integer_dtype",
     "needs_i8_conversion",
     "pandas_dtype",
