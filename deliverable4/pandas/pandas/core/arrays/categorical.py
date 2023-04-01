@@ -57,6 +57,8 @@ from pandas.core.dtypes.common import (
     ensure_int64,
     ensure_platform_int,
     is_categorical_dtype,
+    is_ordered_categorical_dtype,
+    is_unordered_categorical_dtype,
     is_datetime64_dtype,
     is_dict_like,
     is_dtype_equal,
@@ -2881,6 +2883,13 @@ class CategoricalAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
             return Series(res, index=self._index, name=self._name)
 
 class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
+    """
+    Accessor object for categorical properties of the DataFrame values.
+    
+    Parameters
+    ----------
+    data : DataFrame eqiuvalents
+    """
 
     def __init__(self, data) -> None:
         self._parent = data
@@ -2893,20 +2902,41 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
         return setattr(self._parent, name, new_values)
 
     @property
-    def codes(self) -> Series:
+    def all(self) -> DataFrame:
         """
-        Return Series of codes as well as the index.
+        Return all categorical columns in the Dataframe
         """
-        print("hi")
+        return self._parent.select_dtypes("category")
+    
+    def __check_ordered(self, is_ordered: bool=False) -> DataFrame:
+        """
+        Helper function for ordered and unordered to avoid duplication
+        """
+        all_cat_cols = self.all
+        order_cond = is_ordered_categorical_dtype if is_ordered else is_unordered_categorical_dtype
+        return all_cat_cols[[col for col in all_cat_cols.columns if order_cond(all_cat_cols[col])]]
+    
+    @property 
+    def ordered(self) -> DataFrame:
+        """
+        Return all ordered categorical columns in the Dataframe
+        """
+        return self.__check_ordered(is_ordered=True)
+    
+    @property
+    def unordered(self) -> DataFrame:
+        """
+        Return all unordered categorical columns in the Dataframe
+        """
+        return self.__check_ordered()
 
     def _delegate_method(self, name, *args, **kwargs):
-        from pandas import Series
+        from pandas import DataFrame
 
         method = getattr(self._parent, name)
         res = method(*args, **kwargs)
         if res is not None:
-            return Series(res, index=self._index, name=self._name)
-
+            return DataFrame(res, index=self._index, name=self._name)
 
 # utility routines
 
