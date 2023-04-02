@@ -22,7 +22,23 @@ class dfBuilder:
         else:
             self.dtypes = None
 
-        
+
+    def asType(self, dtype: list):
+        if len(self.columns)!= len(dtype):
+            raise ValueError("Given dtypes length do not match with columns length")
+
+        if len(self.__rows) ==0:
+            self.dtypes = list(dtype)
+        else:
+            for i in range(len(self.columns)):
+                
+                for j in range(len(self.__rows)):
+                    
+                    column_check=[(self.__rows[j][i])]
+                    r = np.array(column_check, dtype=np.dtype(dtype[i]))
+                    self.__rows[j][i] = r[0]
+            self.dtypes=list(dtype)
+
 
     def appendDict(self, row: dict):
         new_row = []
