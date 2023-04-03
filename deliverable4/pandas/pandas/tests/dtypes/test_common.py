@@ -296,22 +296,34 @@ def test_is_string_dtype():
 def test_is_string_dtype_nullable(nullable_string_dtype):
     assert com.is_string_dtype(pd.array(["a", "b"], dtype=nullable_string_dtype))
 
-def test_is_ordered_categorical_dtype_with_invalid_type():
+
+def test_is_ordered_categorical_dtype_with_invalid_dtype():
     #46941
     assert not com.is_ordered_categorical_dtype(str)
     assert not com.is_ordered_categorical_dtype(int)
     assert not com.is_ordered_categorical_dtype(None)
-    assert not com.is_ordered_categorical_dtype(['a', 'b'])
-    assert not com.is_ordered_categorical_dtype(pd.Series([0, 1]))
     assert not com.is_ordered_categorical_dtype(
         CategoricalDtype(categories=[0, 1], ordered=False))
 
-def test_is_ordered_categorical_dtype_with_valid_type():
+def test_is_ordered_categorical_dtype_with_valid_dtype():
     #46941
     assert com.is_ordered_categorical_dtype(
         CategoricalDtype(categories=[0, 1], ordered=True))
     assert com.is_ordered_categorical_dtype(
         CategoricalDtype(categories=['a', 'b'], ordered=True))
+    
+def test_is_ordered_categorical_dtype_with_extension_dtype():
+    #46941
+    assert not com.is_ordered_categorical_dtype(['a', 'b'])
+    ser1 = pd.Series([0, 1])
+    assert not com.is_ordered_categorical_dtype(ser1)
+    ser2 = pd.Series(['a', 'b', 'c'], 
+                     dtype=CategoricalDtype(categories=['a', 'b'], ordered=False))
+    assert not com.is_ordered_categorical_dtype(ser2)
+    ser3 = pd.Series(['a', 'b', 'c'], 
+                     dtype=CategoricalDtype(categories=['a', 'b'], ordered=True))
+    assert com.is_ordered_categorical_dtype(ser3)
+
 
 def test_is_unordered_categorical_dtype_with_invalid_type():
     #46941
@@ -329,6 +341,18 @@ def test_is_unordered_categorical_dtype_with_valid_type():
         CategoricalDtype(categories=[0, 1], ordered=False))
     assert com.is_ordered_categorical_dtype(
         CategoricalDtype(categories=['a', 'b'], ordered=False))
+    
+def test_is_unordered_categorical_dtype_with_extension_dtype():
+    #46941
+    assert com.is_ordered_categorical_dtype(['a', 'b'])
+    ser1 = pd.Series([0, 1])
+    assert com.is_ordered_categorical_dtype(ser1)
+    ser2 = pd.Series(['a', 'b', 'c'], 
+                     dtype=CategoricalDtype(categories=['a', 'b'], ordered=False))
+    assert com.is_ordered_categorical_dtype(ser2)
+    ser3 = pd.Series(['a', 'b', 'c'], 
+                     dtype=CategoricalDtype(categories=['a', 'b'], ordered=True))
+    assert not com.is_ordered_categorical_dtype(ser3)
 
 integer_dtypes: list = []
 
