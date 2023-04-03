@@ -22,6 +22,9 @@ class dfBuilder:
         else:
             self.dtypes = None
 
+    def getrows(self):
+        return self.__rows
+
 
     def asType(self, dtype: list):
         if len(self.columns)!= len(dtype):
@@ -75,4 +78,7 @@ class dfBuilder:
 
     def build(self):
         df = DataFrame(self.__rows, columns=self.columns)
+        if self.dtypes is not None:
+            for col, dtype in zip(self.columns, self.dtypes):
+                df[col] = df[col].astype(dtype)
         return df
