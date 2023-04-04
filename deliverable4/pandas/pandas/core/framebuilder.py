@@ -41,6 +41,8 @@ class dfBuilder:
                     r = np.array(column_check, dtype=np.dtype(dtype[i]))
                     self.__rows[j][i] = r[0]
             self.dtypes=list(dtype)
+        
+        return self
 
 
     def appendDict(self, row: dict):
@@ -57,6 +59,8 @@ class dfBuilder:
 
         self.__rows.append(new_row)
 
+        return self
+
 
 
     def appendRow(self, row: list):
@@ -72,6 +76,8 @@ class dfBuilder:
         
         else:
             self.__rows.append(row)
+        
+        return self
 
 
     
