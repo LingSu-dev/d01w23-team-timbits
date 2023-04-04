@@ -38,6 +38,8 @@ class dfBuilder:
                     r = np.array(column_check, dtype=np.dtype(dtype[i]))
                     self.__rows[j][i] = r[0]
             self.dtypes=list(dtype)
+        
+        return self
 
 
     def appendDict(self, row: dict):
