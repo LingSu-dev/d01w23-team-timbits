@@ -12,6 +12,6 @@ pytest pandas/tests/Issue50582_DfBuilder_acceptanceTests/test_dfBuilder.py
 
 Verify that the output is as below:
 ```
-============ 15 passed ============
+============ 25 passed ============
 ```    
 If this is true, then the tests are successful.
