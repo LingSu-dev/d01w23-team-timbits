@@ -2882,6 +2882,20 @@ class CategoricalAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
         if res is not None:
             return Series(res, index=self._index, name=self._name)
 
+@delegate_names(
+    delegate=Categorical,
+    accessors=[
+        "rename_categories",
+        "reorder_categories",
+        "add_categories",
+        "remove_categories",
+        "remove_unused_categories",
+        "set_categories",
+        "as_ordered",
+        "as_unordered",
+    ],
+    typ="method",
+)
 class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
     """
     Accessor object for categorical properties of the DataFrame values.
@@ -2931,12 +2945,33 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
         return self.__check_ordered()
 
     def _delegate_method(self, name, *args, **kwargs):
-        from pandas import DataFrame
+        """
+        Return the result of delegated method on all the categorical columns
+        in the DataFrame.
+        """
+        from pandas import Series
+        
+        # We might not apply to any column. This prevents error messages in
+        # parameters not being passed in. User can be unaware of this
+        # until there has been a categiorical column and this is unwanted.
+        try:
+            bool_cat = CategoricalDtype(categories=[0])
+            sr = Series(dtype=bool_cat)
+            method = getattr(sr.cat, name)
+            method(*args, **kwargs)
+        except (TypeError, AttributeError) as ex:
+            raise ex
+        except:
+            pass
+        
+        # Apply method on all 
+        cat_df_res = self._parent.cat.all
+        
+        for column in cat_df_res:
+            method = getattr(cat_df_res[column].values, name)
+            cat_df_res[column] = method(*args, **kwargs)
 
-        method = getattr(self._parent, name)
-        res = method(*args, **kwargs)
-        if res is not None:
-            return DataFrame(res, index=self._index, name=self._name)
+        return cat_df_res
 
 # utility routines
 

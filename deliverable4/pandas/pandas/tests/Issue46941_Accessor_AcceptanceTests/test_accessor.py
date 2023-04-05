@@ -46,8 +46,22 @@ def test_all():
     
     print("Updated extraction of categorical column:\n")
     print(people.cat.all)
-        
+    
+def test_delegated_works_on_all_categorical_column():
+    print("\n\nTest functionality for delegated as_unordered method:\n")
+    
+    print("Original Categories:\n")
+    print("age_group categories was: " + str(people["age_group"].cat.categories))
+    print("eye_color categories was: " + str(people["eye_color"].cat.categories))
+
+    print("Exptected Output after remove which works on all columns:\n")
+    res = people.cat.add_categories([0])
+    print("age_group categories is: ",res["age_group"].cat.categories)
+    print("eye_color categories is: ", res["eye_color"].cat.categories)
+    
+    
 if __name__ == "__main__":
     test_ordered()
     test_unordered()
     test_all()
+    test_delegated_works_on_all_categorical_column()
