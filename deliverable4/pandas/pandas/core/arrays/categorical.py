@@ -2886,6 +2886,13 @@ class CategoricalAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
     delegate=Categorical,
     accessors=[
         "rename_categories",
+        "reorder_categories",
+        "add_categories",
+        "remove_categories",
+        "remove_unused_categories",
+        "set_categories",
+        "as_ordered",
+        "as_unordered",
     ],
     typ="method",
 )
