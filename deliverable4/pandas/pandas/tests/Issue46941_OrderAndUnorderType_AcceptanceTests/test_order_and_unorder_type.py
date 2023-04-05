@@ -16,17 +16,16 @@ group_member_cat = CategoricalDtype(categories=['Ben', 'John', 'Alan'], ordered=
 age_cat = CategoricalDtype(categories=[15, 18, 19], ordered=True)
 
 array = [0, 1, 2]
-group_member = pd.DataFrame(columns=array, dtype=group_member_cat)
-group_member.astype(group_member_cat)
-age = pd.DataFrame(columns=array)
-age.astype(age_cat)
-
-
 series = ['a', 'b', 'c']
+group_member = pd.Series(array, dtype=group_member_cat)
+group_member.astype(group_member_cat)
+age = pd.Series(array, dtype=age_cat)
 
-def test_order_type():
 
-  print("Testing order type")
+
+def test_categorical_dtype():
+
+  print("Testing categorical dtype")
 
   if (is_ordered_categorical_dtype(age_cat) and
       not is_unordered_categorical_dtype(age_cat)):
@@ -36,14 +35,9 @@ def test_order_type():
 
   if (is_ordered_categorical_dtype(age) and
       not is_unordered_categorical_dtype(age)):
-      print("pass order dataframe")
+      print("pass order series")
   else:
-      print("fail order dataframe")
-
-
-def test_unorder_type():
-
-  print("Testing unorder type")
+      print("fail order series")
 
   if (is_unordered_categorical_dtype(group_member_cat) and
       not is_ordered_categorical_dtype(group_member_cat)):
@@ -53,36 +47,42 @@ def test_unorder_type():
 
   if (is_unordered_categorical_dtype(group_member) and 
       not is_ordered_categorical_dtype(group_member)):
-      print("pass unorder dataframe")
+      print("pass unorder series")
   else:
-      print("fail unorder dataframe")
+      print("fail unorder series")
 
-  if (is_unordered_categorical_dtype(series) and 
+
+def test_non_categorical_type():
+
+  print("Testing non categorical dtype")
+
+  if (not is_unordered_categorical_dtype(series) and 
       not is_ordered_categorical_dtype(series)):
-      print("pass dataframe without dtype")
+      print("pass serie")
   else:
-      print("fail dataframe without dtype")
+      print("fail series")
 
-  if (is_unordered_categorical_dtype(array) and 
+
+  if (not is_unordered_categorical_dtype(array) and 
       not is_ordered_categorical_dtype(array)):
       print("pass array")
   else:
       print("fail array")
   
-  if (is_unordered_categorical_dtype(1) and 
+  if (not is_unordered_categorical_dtype(1) and 
       not is_ordered_categorical_dtype(1)):
       print("pass int")
   else:
       print("fail int")
 
-  if (is_unordered_categorical_dtype('a') and 
+  if (not is_unordered_categorical_dtype('a') and 
       not is_ordered_categorical_dtype('a')):
       print("pass str")
   else:
       print("fail str")
 
   
-  if (is_unordered_categorical_dtype(None) and 
+  if (not is_unordered_categorical_dtype(None) and 
       not is_ordered_categorical_dtype(None)):
       print("pass None")
   else:
@@ -91,5 +91,5 @@ def test_unorder_type():
   print("Test finished")
 
 if __name__ == "__main__":
-    test_order_type()
-    test_unorder_type()
+    test_categorical_dtype()
+    test_non_categorical_type()
