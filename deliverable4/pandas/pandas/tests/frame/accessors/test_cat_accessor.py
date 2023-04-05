@@ -101,7 +101,7 @@ class TestCatFrameAccessor(CatFrameAccessorBase):
         tm.assert_frame_equal(ordered_df, mixed.cat.ordered, check_column_type=False)
         tm.assert_frame_equal(unordered_df, mixed.cat.unordered, check_column_type=False)
     
-    def test_preserve_row_cat_accessor_get_properties(self, unordered_df, ordered_df, nocat_df, mixcontent_df):
+    def test_preserve_row_cat_accessor_get_properties(self, unordered_df, ordered_df, mixcontent_df):
         """
         DataFrame columns should contain the same data after the segregation.
         """  
@@ -167,17 +167,16 @@ class TestCatFrameAccessor(CatFrameAccessorBase):
         for col in clean_df.cat.all:
             assert(clean_df[col].cat.categories.array.size == 0)
             
-    def test_delegate_non_empty_param(self, ordered_df, unordered_df):
+    def test_delegate_non_empty_param(self, ordered_df, unordered_df, nocat_df):
         """
         DataFrame operation with a parameter should be applied on all categorical without error.
-        We use remove_categories.
+        We use remove_categories. This furthur tests categories from non categoricals are not
+        returned.
         """
-        mixed = concat([unordered_df, ordered_df], axis=1, join='inner')
+        mixed = concat([unordered_df, ordered_df, nocat_df], axis=1, join='inner')
         clean_df = mixed.cat.remove_categories([0])
         for col in clean_df.cat.all:
             assert(clean_df[col].cat.categories.array.size == 1)
-        
-        
         
     
         
