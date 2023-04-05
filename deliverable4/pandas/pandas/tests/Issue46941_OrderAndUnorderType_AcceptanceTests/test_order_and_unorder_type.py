@@ -2,14 +2,12 @@
 Acceptance Tests for Issue 46941 is_ordered_categorical_dtype
 and is_unordered_categorical_dtype.
 """
-
 import pandas as pd
 from pandas.core.dtypes.common import (
   is_ordered_categorical_dtype,
   is_unordered_categorical_dtype,
   CategoricalDtype,
 )
-
 
 
 group_member_cat = CategoricalDtype(categories=['Ben', 'John', 'Alan'], ordered=False)
@@ -20,7 +18,6 @@ series = ['a', 'b', 'c']
 group_member = pd.Series(array, dtype=group_member_cat)
 group_member.astype(group_member_cat)
 age = pd.Series(array, dtype=age_cat)
-
 
 
 def test_categorical_dtype():
@@ -62,7 +59,6 @@ def test_non_categorical_type():
   else:
       print("fail series")
 
-
   if (not is_unordered_categorical_dtype(array) and 
       not is_ordered_categorical_dtype(array)):
       print("pass array")
@@ -81,7 +77,6 @@ def test_non_categorical_type():
   else:
       print("fail str")
 
-  
   if (not is_unordered_categorical_dtype(None) and 
       not is_ordered_categorical_dtype(None)):
       print("pass None")
@@ -89,6 +84,7 @@ def test_non_categorical_type():
       print("fail None")
 
   print("Test finished")
+
 
 if __name__ == "__main__":
     test_categorical_dtype()
