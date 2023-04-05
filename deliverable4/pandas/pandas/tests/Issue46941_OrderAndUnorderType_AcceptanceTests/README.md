@@ -12,5 +12,5 @@ python pandas/tests/Issue46941_Accessor_AcceptanceTests/test_order_and_unorder_t
 
 Open pandas/tests/Issue46941_OrderAndUnorderType_AcceptanceTests/expected_output.pdf
 
-Verify that the generated output look like expected_output.pdf    
+All tests should pass
 If this is true, then the tests are successful.
