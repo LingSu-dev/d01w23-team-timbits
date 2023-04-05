@@ -38,7 +38,7 @@ def test_order_type():
       not is_unordered_categorical_dtype(age)):
       print("pass order dataframe")
   else:
-      print("fail order category")
+      print("fail order dataframe")
 
 
 def test_unorder_type():
@@ -80,6 +80,13 @@ def test_unorder_type():
       print("pass str")
   else:
       print("fail str")
+
+  
+  if (is_unordered_categorical_dtype(None) and 
+      not is_ordered_categorical_dtype(None)):
+      print("pass None")
+  else:
+      print("fail None")
 
   print("Test finished")
 
