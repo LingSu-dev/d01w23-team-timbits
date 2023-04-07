@@ -448,6 +448,24 @@ meaning and certain operations are possible. If the categorical is unordered, ``
     s
     s.min(), s.max()
 
+You can check whether an object is ordered using functions ``.api.types.is_ordered_categorical_dtype()`` and 
+``.api.types.is_unordered_categorical_dtype()``. These functions will return booleans to indicate whether the
+dtype is ordered or not.
+For objects that are not in categorical dtype, both functions will return ``False``.
+
+.. ipython:: python
+
+    cat_dtype = pd.CategoricalDtype(categories=['a', 'b', 'c'], ordered=True)
+    pd.api.types.is_ordered_categorical_dtype(cat_dtype)
+    pd.api.types.is_unordered_categorical_dtype(cat_dtype)
+    s = pd.Series(['a', 'b', 'c', 'd', 'e', 'f'])
+    pd.api.types.is_ordered_categorical_dtype(s)
+    pd.api.types.is_unordered_categorical_dtype(s)
+    s = s.astype('category')
+    pd.api.types.is_ordered_categorical_dtype(s)
+    pd.api.types.is_unordered_categorical_dtype(s) 
+
+
 You can set categorical data to be ordered by using ``as_ordered()`` or unordered by using ``as_unordered()``. These will by
 default return a *new* object.
 
