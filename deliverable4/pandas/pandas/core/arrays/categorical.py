@@ -2943,6 +2943,17 @@ class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixi
         Return all unordered categorical columns in the Dataframe
         """
         return self.__check_ordered()
+    
+    @property
+    def categories(self) -> DataFrame:
+        """
+        Return all categorical type in the Dataframe
+        """
+        cat_col = self._parent.select_dtypes("category")
+        dict = {}
+        for cat in cat_col:
+            dict[cat] = cat_col[cat].cat.categories
+        return dict
 
     def _delegate_method(self, name, *args, **kwargs):
         """
