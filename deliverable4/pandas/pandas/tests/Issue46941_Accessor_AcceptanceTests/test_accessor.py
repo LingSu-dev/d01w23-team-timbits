@@ -46,7 +46,13 @@ def test_all():
     
     print("Updated extraction of categorical column:\n")
     print(people.cat.all)
-    
+
+def test_categories():
+    print("\n\nTest functionality for categories in issue:\n")
+
+    print("Exptected Output Categories:\n")
+    print("people categories is: ",people.cat.categories)
+  
 def test_delegated_works_on_all_categorical_column():
     print("\n\nTest functionality for delegated as_unordered method:\n")
     
@@ -64,4 +70,5 @@ if __name__ == "__main__":
     test_ordered()
     test_unordered()
     test_all()
+    test_categories()
     test_delegated_works_on_all_categorical_column()
