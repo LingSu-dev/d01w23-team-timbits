@@ -57,6 +57,8 @@ from pandas.core.dtypes.common import (
     ensure_int64,
     ensure_platform_int,
     is_categorical_dtype,
+    is_ordered_categorical_dtype,
+    is_unordered_categorical_dtype,
     is_datetime64_dtype,
     is_dict_like,
     is_dtype_equal,
@@ -2880,6 +2882,107 @@ class CategoricalAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
         if res is not None:
             return Series(res, index=self._index, name=self._name)
 
+@delegate_names(
+    delegate=Categorical,
+    accessors=[
+        "rename_categories",
+        "reorder_categories",
+        "add_categories",
+        "remove_categories",
+        "remove_unused_categories",
+        "set_categories",
+        "as_ordered",
+        "as_unordered",
+    ],
+    typ="method",
+)
+class CategoricalFrameAccessor(PandasDelegate, PandasObject, NoNewAttributesMixin):
+    """
+    Accessor object for categorical properties of the DataFrame values.
+    
+    Parameters
+    ----------
+    data : DataFrame eqiuvalents
+    """
+
+    def __init__(self, data) -> None:
+        self._parent = data
+        self._freeze()
+
+    def _delegate_property_get(self, name):
+        return getattr(self._parent, name)
+
+    def _delegate_property_set(self, name, new_values):
+        return setattr(self._parent, name, new_values)
+
+    @property
+    def all(self) -> DataFrame:
+        """
+        Return all categorical columns in the Dataframe
+        """
+        return self._parent.select_dtypes("category")
+    
+    def __check_ordered(self, is_ordered: bool=False) -> DataFrame:
+        """
+        Helper function for ordered and unordered to avoid duplication
+        """
+        all_cat_cols = self.all
+        order_cond = is_ordered_categorical_dtype if is_ordered else is_unordered_categorical_dtype
+        return all_cat_cols[[col for col in all_cat_cols.columns if order_cond(all_cat_cols[col])]]
+    
+    @property 
+    def ordered(self) -> DataFrame:
+        """
+        Return all ordered categorical columns in the Dataframe
+        """
+        return self.__check_ordered(is_ordered=True)
+    
+    @property
+    def unordered(self) -> DataFrame:
+        """
+        Return all unordered categorical columns in the Dataframe
+        """
+        return self.__check_ordered()
+    
+    @property
+    def categories(self) -> DataFrame:
+        """
+        Return all categorical type in the Dataframe
+        """
+        cat_col = self._parent.select_dtypes("category")
+        dict = {}
+        for cat in cat_col:
+            dict[cat] = cat_col[cat].cat.categories
+        return dict
+
+    def _delegate_method(self, name, *args, **kwargs):
+        """
+        Return the result of delegated method on all the categorical columns
+        in the DataFrame.
+        """
+        from pandas import Series
+        
+        # We might not apply to any column. This prevents error messages in
+        # parameters not being passed in. User can be unaware of this
+        # until there has been a categiorical column and this is unwanted.
+        try:
+            bool_cat = CategoricalDtype(categories=[0])
+            sr = Series(dtype=bool_cat)
+            method = getattr(sr.cat, name)
+            method(*args, **kwargs)
+        except (TypeError, AttributeError) as ex:
+            raise ex
+        except:
+            pass
+        
+        # Apply method on all 
+        cat_df_res = self._parent.cat.all
+        
+        for column in cat_df_res:
+            method = getattr(cat_df_res[column].values, name)
+            cat_df_res[column] = method(*args, **kwargs)
+
+        return cat_df_res
 
 # utility routines
 

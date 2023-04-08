@@ -308,6 +308,55 @@ It's also possible to pass in the categories in a specific order:
     s.cat.categories
     s.cat.ordered
 
+**Update D4 Accessor:** DataFrame is now integrated with the categorical properties. 
+Due to DataFrame being a multi-dimensional object, ``df.cat.categories`` and 
+``df.cat.ordered`` becomes a column-wise operation. ``df.cat.categories`` will
+give a dictionary of the category's index while ``df.cat.ordered`` will give the
+columns that are categorical and are ordered.
+
+.. ipython:: python
+    
+    df = pd.DataFrame()
+    df['s1'] = pd.Series(pd.Categorical(["a", "b", "c", "a"], categories=["c", "b", "a"], ordered=True))
+    df['s2'] = pd.Series(pd.Categorical(["a", "b", "c", "a"], categories=["c", "b", "a"]))
+    df.cat.categories
+    df.cat.ordered
+
+In addition, we provided two extra properties ``df.cat.all`` and ``df.cat.unordered``
+for categorical column extraction. These properties are intuitive to create cleaner code
+and abstract away the tedious task of order/unordered categorical column extraction.
+
+.. ipython:: python
+    
+    df.cat.all
+    df.cat.unordered
+
+.. note::
+
+    The new accessor ``df.cat`` also delegates the ``categorical`` methods such as
+    ``rename_categories``. You will see examples later on of how they are used in ``Series``.
+    For ``df.cat``, the operation is delegated to all the categorical columns. If you would
+    like to only apply this to a specific subset, you can always use the existing ``filter`` and
+    ``loc`` methods. Methods such as ``remove_unused_categories`` are direct beneficiaries of 
+    this addition as the user no longer needs to write manual loops to apply them one by one.
+
+    This delegation is limited in the sense that there is yet to be an error suppressing. If
+    one column fails then all fail. In the future, a suppression parameter might need to be added 
+    or new methods being added to the delegation will need to be aware of this issue.
+
+    .. ipython:: python
+        
+        # Example usage of one of the delegated method
+        unused_df = pd.DataFrame()
+        unused_df['s1'] = pd.Series(pd.Categorical(["a", "b", "a"], categories=["a", "b", "c", "d"])) 
+        unused_df['s2'] = pd.Series(pd.Categorical(["a", "b", "a"], categories=["a", "b", "c", "d"]))
+
+        clean_df = unused_df.cat.remove_unused_categories()
+        clean_df['s1']
+        clean_df['s2']
+
+**END Update D4 Accessor**
+
 .. note::
 
     New categorical data are **not** automatically ordered. You must explicitly
@@ -447,6 +496,46 @@ meaning and certain operations are possible. If the categorical is unordered, ``
     s.sort_values(inplace=True)
     s
     s.min(), s.max()
+
+**Update D4 type checking:** You can check whether an object is ordered using functions ``.api.types.is_ordered_categorical_dtype()`` and 
+``.api.types.is_unordered_categorical_dtype()``. These functions will return booleans to indicate whether the
+dtype is ordered or not.
+For objects that are not in categorical dtype, both functions will return ``False``.
+
+.. ipython:: python
+
+    cat_dtype = pd.CategoricalDtype(categories=['a', 'b', 'c'], ordered=True)
+    pd.api.types.is_ordered_categorical_dtype(cat_dtype)
+    pd.api.types.is_unordered_categorical_dtype(cat_dtype)
+    s = pd.Series(['a', 'b', 'c', 'd', 'e', 'f'])
+    pd.api.types.is_ordered_categorical_dtype(s)
+    pd.api.types.is_unordered_categorical_dtype(s)
+    s = s.astype('category')
+    pd.api.types.is_ordered_categorical_dtype(s)
+    pd.api.types.is_unordered_categorical_dtype(s) 
+
+
+This interface abstracts away the inner details of verifying the dtypes when querying for categorical dtypes.
+It provides an alternative to users who do not want to get an entire DataFrame but only the ordering of the
+columns. Originally, they have to create their own function/lambda but with the new type-checking functions,
+they can do it in one line. Furthermore, this is also used to reduce duplicate code in the ``df.cat`` 
+accessor's ordering properties.
+
+.. ipython:: python
+
+    # Original tedious solution
+    categories = df.select_dtypes("category")
+    categories[[col for col in categories.columns if categories[col].cat.ordered]]
+
+    # New one liner with much cleaner code
+    df.loc[:, df.apply(pd.api.types.is_ordered_categorical_dtype)]
+
+.. note::
+
+    ``df.cat`` does not use the apply approach. The implementation does not adopt it as apply 
+    is known for being slow, and it passes ``None`` into the lambdas which result in unwanted behavior.
+
+**END Update D4 type checking**
 
 You can set categorical data to be ordered by using ``as_ordered()`` or unordered by using ``as_unordered()``. These will by
 default return a *new* object.
