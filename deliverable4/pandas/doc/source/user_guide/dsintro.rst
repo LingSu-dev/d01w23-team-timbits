@@ -318,6 +318,58 @@ result will be ``range(n)``, where ``n`` is the array length.
    pd.DataFrame(d)
    pd.DataFrame(d, index=["a", "b", "c", "d"])
 
+From dfBuilder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is a custom class that allows you to build a DataFrame row-wisely. 
+The class is initialized with columns and an optional dtypes, which corresponds to the elements in a DataFrame .
+You can then append rows to the dfBuilder using the appendRow or appendDict methods.
+The dfBuilder can be converted to a DataFrame using the build() method.
+
+.. ipython:: python
+
+   from pandas import dfBuilder
+
+   builder = dfBuilder(columns = ["name", "age", "gender"], dtypes=[str, int, str])
+   builder = builder.appendRow(["John", 19, 'M']).appendRow(["Mary", 20, 'F'])
+   builder.build()
+
+
+.. note::
+
+   Make sure the row data you provide has the same length with the columns you provide. 
+   Otherwise, an error will be raised. 
+
+
+You can choose to omit the dtypes argument in the initialization, in which case the dtypes will be inferred from the data.
+On the other hand, you can choose to add dtypes by using asType later on.
+
+.. ipython:: python
+
+   builder = dfBuilder(columns = ["name", "age", "gender"])
+   builder = builder.appendRow(["John", 19, 'M']).appendRow(["Mary", 20, 'F'])
+   builder.build()
+
+   builder.asType([str, int, str]).build()
+
+
+.. note::
+
+   Make sure the data you provide is compatible to the dtypes you provide. Numpy will try to convert the data to the dtype you provide.
+   If the conversion is not possible, an error will be raised.
+
+.. ipython:: python
+
+   builder = dfBuilder(columns=["name", "age", "gender"])
+   builder = builder.appendDict({"name": "Jason", "age": 20, "gender": "M"})
+   builder.build()
+
+.. note::
+
+   Make sure the dict data you provide has the keys with the columns names you provide. 
+   Otherwise, an error will be raised. 
+
+
 From structured or record array
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
